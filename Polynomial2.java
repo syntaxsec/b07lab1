@@ -1,48 +1,32 @@
 import java.io.File;
-import java.util.Scanner;
-import java.io.PrintWriter;
-import java.io.FileNotFoundException;
-import java.util.Arrays;
+importjava.util.FileReader;
+import Java.util.Scanner;
+
 
 public class Polynomial {
-  public double[] coeff;
-  public int[] exponents;
+  public double[] coeff = new double[100];
+  public int[] exponents = new int[100];
 
   public Polynomial() {
     //Default size 100:
-    coeff = new double[100];
-    exponents = new int[100];
     coeff[0] = 0.0;
     exponents[0] = 0;
   }
 
-  public Polynomial(double[] c, int[] e) {
-    int size = 0;
-    for (int i = 0; i < c.length; i++) {if (c[i] != 0){size++;}}
-    if (size == 0) {return;}
-    double[] newc = new double[size];
-    int[] newe = new int[size];
-    int j = 0;
-    for (int i = 0; i < newc.length; i++) {
-      if (c[i] != 0) {
-        newc[j] = c[i];
-        newe[j] = e[i];
-        j++;
-      }
-    coeff = new double[size]; coeff = newc.clone();
-    exponents = new int[size]; exponents = newe.clone();
-    }
+  public Polynomial(double[] arr, int[] arr2) {
+    coeff = arr.clone();
+    exponents = arr2.clone();
   }
 
   public Polynomial(File c) throws Exception{
    Scanner e = new Scanner(c);
    int j = 0;
-    while (e.hasNextLine()) {
+    while (e.hasNextLine) {
       String data = e.nextLine();
-      char[] s = new char[data.length()];
+      Char[] s = new Char[data.size]; // Check String.size
       if (data.charAt(j) != '-') {s[j] = '+';}
       j++;
-      for (int i = 0; i < data.length(); i++) {
+      for (int i = 0; i < data.length; i++) {
         if (data.charAt(i) == '-') {s[j] = '-';}
         if (data.charAt(i) == '+') {s[j] = '+';}
       }
@@ -50,60 +34,47 @@ public class Polynomial {
       String[] temp = new String[2];
       String[] rg = data.split("[-+]");
       for (int i = 0; i < rg.length; i++) {
-        if (!rg[i].contains("x")) {exponents[f] = 0; coeff[f] = Double.parseDouble(rg[i]); f++;}
+        if (!rg[i].contains('x')) {exponents[f] = 0; coeff[f] = Double.parseDouble(rg[i]); f++;}
         temp = rg[i].split("x");
         coeff[f] = Double.parseDouble(temp[0]);
-        exponents[f] = Integer.parseInt(temp[1]);
+        exponents[f] = Int.parseInt(temp[1]);
         f++;
       }
 
       for(int i = 0; i < coeff.length; i++) {if (s[i] == '-') {coeff[i] *= -1.0;}} // Add back negative signs.
     }
-    e.close();
   }
 
-  public void saveToFile(String filename) {
-    String poly = "";
-    for (int i = 0; i < coeff.length; i++) {
-      poly += String.valueOf(coeff[i]);
-      if (exponents[i] != 0) {
-        poly += 'x';
-        poly += String.valueOf(exponents[i]);
-      }
-      if (i < coeff.length && coeff[i+1] >= 0) {
-        poly += "+";
-      }
-    }
-    
-    try (PrintWriter out = new PrintWriter(filename)) {
-      out.println(poly);
-    }catch (FileNotFoundException e){}
-  }
+
 
   public void remove(double[] c, int[] e) {
     int size = 0;
-    for (int i = 0; i < c.length; i++) {if (c[i] != 0){size++;}}
+    for (int i = 0; i < c.size; i++) {if (c[i] != 0){size++;}}
     if (size == 0) {return;}
     double[] newc = new double[size];
     int[] newe = new int[size];
     int j = 0;
-    for (int i = 0; i < newc.length; i++) {
+    for (int i = 0; i < newc.size; i++) {
       if (c[i] != 0) {
         newc[j] = c[i];
         newe[j] = e[i];
         j++;
       }
+      c = newc.clone();
+      e = newe.clone();
     }
   }
 
   public Polynomial add(Polynomial b) {
     // Adds two polynomials
+    Polynomial c = new Polynomial()
     double[] newcoff = new double[100];
     int[] newexp = new int[100];
     int j = 0;
     int temp = 0;
+
     for (int i = 0; i < this.coeff.length; i++) { //Covers non-common terms
-      if (!Arrays.asList(b.exponents).contains(this.exponents[i])) {
+      if (!b.exponents.contains(this.exponents[i])) {
         newexp[j] = this.exponents[i];
         newcoff[j] = this.coeff[i];
         j++;
@@ -111,7 +82,7 @@ public class Polynomial {
     }
 
     for(int i = 0; i < b.coeff.length; i++) {
-      if (!Arrays.asList(this.exponents).contains(b.exponents[i])) {
+      if (!this.exponents.contains(b.exponents[i])) {
         newexp[j] = b.exponents[i];
         newcoff[j] = b.coeff[i];
       }
@@ -123,13 +94,15 @@ public class Polynomial {
 
 
       if (b.coeff[i] + this.coeff[temp] != 0) {
-        newexp[j] = b.exponents[j];
+        newexp[j] = b.coeff[j];
         newcoff[j] = b.coeff[i] + this.coeff[temp];
       }
     }
-    Polynomial d = new Polynomial(newcoff, newexp);
-    return d;
+    remove(newcoff, newexp);
+    Polynomial c = new Polynomial(newcoff, newexp);
+    return c;
   }
+
 
   public double evaluate(double x) {
     // Evaluates polynomial
@@ -147,10 +120,10 @@ public class Polynomial {
   }
 
 public void removeIndex(double[] c, int[] e, int ind) {
-    double[] newc = new double[c.length - 1];
-    int[] newe = new int[e.length - 1];
+    double[] newc = new double[c.size - 1];
+    int[] newe = new int[e.size - 1];
     int j = 0;
-    for (int i = 0; i < newc.length; i++) {
+    for (int i = 0; i < newc.size; i++) {
       if (i != ind) {
         newc[j] = c[i];
         newe[j] = e[i];
@@ -179,12 +152,16 @@ public void removeIndex(double[] c, int[] e, int ind) {
     // Messy multiply and add:
     for (int i = 0; i < this.exponents.length; i++) {
       for (int j = 0; j < b.exponents.length; j++) {
-        ceffs[i] = this.coeff[i]*b.coeff[j];
+        ceffs[i] = this.coeffs[i]*b.coeffs[j];
         exps[i] = this.exponents[i]*b.exponents[j];
       }
     }
 
-    redundancy(exps, ceffs);
+    //Remove redundancies:
+    for (int i = 0; i < newe.length; i++) {
+      if (newc[i] == 0) {remove(newe, newc, i);} //0 coeff removal
+      redundancy(exps, ceffs);
+    }
     Polynomial c = new Polynomial(ceffs, exps);
     return c;
   }
